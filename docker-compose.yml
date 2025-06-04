@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  piper-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5600:5600"
+    volumes:
+      - piper_data:/app/piper_data
+      - audio_outputs:/app/outputs
+    environment:
+      - FLASK_ENV=production
+    networks:
+      - piper-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5600/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  piper-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5650:5650"
+    environment:
+      - BACKEND_URL=http://piper-backend:5600
+      - FRONTEND_PORT=5650
+    networks:
+      - piper-network
+    depends_on:
+      - piper-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5650/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  piper_data:
+    driver: local
+  audio_outputs:
+    driver: local
+
+networks:
+  piper-network:
+    driver: bridge
