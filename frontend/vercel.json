@@ -1,0 +1,32 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "api/index.py",
+        "use": "@vercel/python"
+      },
+      {
+        "src": "static/**",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/static/(.*)",
+        "dest": "/static/$1"
+      },
+      {
+        "src": "/health",
+        "dest": "/api/index.py"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/api/index.py"
+      }
+    ],
+    "env": {
+      "BACKEND_URL": "64.224.251.174:5600",
+      "BACKEND_PORT": "5600",
+      "FRONTEND_PORT": "5000"
+    }
+  }
