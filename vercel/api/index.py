@@ -1,5 +1,4 @@
 import os
-from vercel_wsgi import make_lambda_handler
 from flask import Flask, render_template_string, send_from_directory, jsonify
 
 app = Flask(__name__)
@@ -410,6 +409,8 @@ def index():
 def health_check():
     return jsonify({"status": "ok", "message": "Frontend server is running"})
 
-# Vercel requires this handler
-def handler(request):
-    return app(request.environ, request.start_response)
+# Export the app for Vercel
+application = app
+
+if __name__ == "__main__":
+    app.run(debug=True)
